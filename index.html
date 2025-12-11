@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rock Paper Scissors</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <h1>Rock Paper Scissors</h1>
+
+    <button class="connect" onclick="connectWallet()">Connect Wallet</button>
+    <p id="walletAddress" class="wallet-address"></p>
+    <div id="walletAddress" class="wallet-box">
+        🔗Wallet: <span id="walletShort"></span>
+    </div>
+    <h2>Choose your move</h2>
+    <div class="buttons">
+        <button onclick="play(0)">🪨 Rock</button>
+        <button onclick="play(1)">📄 Paper</button>
+        <button onclick="play(2)">✂️ Scissors</button>
+    </div>
+    <h2>Result</h2>
+    <div id="resultBox" class="result-box">Make your move to see the result</div>
+
+
+    <h2>View game history</h2>
+    <input id="historyAddress" placeholder="Enter address or leave empty">
+    <button class="show-history" onclick="loadHistory()">Show History</button>
+
+    <div id="history">
+        <h3>Game History</h3>
+        <div id="log"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
