@@ -1,38 +1,115 @@
-.App {
-  text-align: center;
+/* Общие стили */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f8f9fc;
+  margin: 0;
+  padding: 0;
+  color: #333;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Верхняя панель с заголовком и поиском */
+.header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 40px 20px 20px 20px;
+  background: linear-gradient(135deg, #6c63ff, #a29bfe);
   color: white;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 
-.App-link {
-  color: #61dafb;
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.header input[type="text"] {
+  margin-top: 20px;
+  padding: 12px 15px;
+  width: 300px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.header input[type="text"]:focus {
+  box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+  outline: none;
+}
+
+/* Галерея в стиле Masonry */
+.gallery {
+  column-count: 3;
+  column-gap: 25px;
+  padding: 30px 20px;
+}
+
+@media (max-width: 1000px) {
+  .gallery {
+    column-count: 2;
   }
-  to {
-    transform: rotate(360deg);
+}
+
+@media (max-width: 650px) {
+  .gallery {
+    column-count: 1;
   }
+}
+
+/* Карточки сертификатов */
+.card {
+  background: white;
+  border-radius: 15px;
+  margin-bottom: 25px;
+  display: inline-block;
+  width: 100%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.card img {
+  width: 100%;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  display: block;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 15px;
+  text-align: left;
+}
+
+.card-content h2 {
+  font-size: 1.1rem;
+  margin: 5px 0;
+  color: #4b4b6a;
+}
+
+.card-content p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 4px 0;
+}
+
+.card-content p span {
+  font-weight: 600;
+  color: #6c63ff;
+}
+
+/* Сообщение о пустой галерее */
+.no-certificates {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #999;
+  margin-top: 60px;
 }

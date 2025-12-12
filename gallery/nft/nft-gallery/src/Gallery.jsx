@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+import { Contract, BrowserProvider } from "ethers";
 export const CONTRACT_ADDRESS = "0xB80391a31912164cF39dBc2C7D48C203C0C3B692";
 
 export const CONTRACT_ABI = [
@@ -452,3 +454,107 @@ export const CONTRACT_ABI = [
 		"type": "function"
 	}
 ];
+
+
+function Gallery() {
+  const [certificates, setCertificates] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadCertificates = async () => {
+    setLoading(true);
+    try {
+      if (!window.ethereum) {
+        alert("Install MetaMask!");
+        return;
+      }
+
+      // Подключение MetaMask
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+
+      const provider = new BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const userAddress = await signer.getAddress();
+
+      const contract = new Contract(
+        CONTRACT_ADDRESS,
+        CertificateNFT_ABI,
+        signer
+      );
+
+      // Получаем общее количество токенов
+      const total = await contract.nextTokenId();
+
+      let userNFTs = [];
+
+      for (let tokenId = 0; tokenId < total; tokenId++) {
+        try {
+          const owner = await contract.ownerOf(tokenId);
+
+          // Если NFT принадлежит залогиненному пользователю
+          if (owner.toLowerCase() === userAddress.toLowerCase()) {
+            const uri = await contract.tokenURI(tokenId);
+
+            // Подгрузка JSON с метаданными из IPFS
+            const metadataURL = `https://gateway.pinata.cloud/ipfs/${uri}`;
+            const metadata = await fetch(metadataURL).then((res) => res.json());
+
+            userNFTs.push({
+              tokenId,
+              name: metadata.name,
+              program: metadata.program,
+              grade: metadata.grade,
+              image: metadata.image, // IPFS CID
+            });
+          }
+        } catch (e) {
+          continue;
+        }
+      }
+
+      setCertificates(userNFTs);
+    } catch (error) {
+      console.error("Error loading NFTs:", error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadCertificates();
+  }, []);
+
+  if (loading) return <p>Loading certificates...</p>;
+  if (certificates.length === 0) return <p>No certificates found.</p>;
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h2>Your NFT Certificates</h2>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+        {certificates.map((cert) => (
+          <div
+            key={cert.tokenId}
+            style={{
+              width: "250px",
+              padding: "15px",
+              border: "1px solid #ccc",
+              borderRadius: "10px",
+              boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+            }}
+          >
+            <img
+              src={`https://gateway.pinata.cloud/ipfs/${cert.image}`}
+              alt="NFT"
+              style={{ width: "100%", borderRadius: "10px" }}
+            />
+
+            <h3>{cert.name}</h3>
+            <p>Program: {cert.program}</p>
+            <p>Grade: {cert.grade}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default Gallery;

@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+import { Contract, BrowserProvider } from "ethers";
 export const CONTRACT_ADDRESS = "0xB80391a31912164cF39dBc2C7D48C203C0C3B692";
 
 export const CONTRACT_ABI = [
@@ -452,3 +454,62 @@ export const CONTRACT_ABI = [
 		"type": "function"
 	}
 ];
+
+
+function Gallery() {
+  const [certificates, setCertificates] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadCertificates = async () => {
+    setLoading(true);
+    try {
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+      const provider = new BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contract = new Contract(CONTRACT_ADDRESS, CertificateNFT_ABI, signer);
+
+      const address = await signer.getAddress();
+      const uris = await contract.getHistory(address); // возвращает массив tokenURI
+      setCertificates(uris);
+    } catch (err) {
+      console.error(err);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadCertificates();
+  }, []);
+
+  if (loading) return <p>Loading certificates...</p>;
+
+  if (certificates.length === 0) return <p>No certificates found.</p>;
+
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+      {certificates.map((uri, index) => (
+        <div
+          key={index}
+          style={{
+            border: "1px solid #ccc",
+            borderRadius: "10px",
+            padding: "10px",
+            width: "250px",
+            boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+          }}
+        >
+          <img
+            src={`https://gateway.pinata.cloud/ipfs/${uri}`}
+            alt={`Certificate ${index}`}
+            style={{ width: "100%", borderRadius: "10px" }}
+          />
+          <p style={{ fontWeight: "bold", marginTop: "10px" }}>
+            Graduate: {uri.split("/")[0]}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default Gallery;
